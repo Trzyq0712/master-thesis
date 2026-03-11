@@ -1,0 +1,26 @@
+field v: Int
+
+predicate number(this: Ref) {
+    acc(this.v)
+}
+
+function snap(this: Ref): Int
+    requires number(this)
+{
+    unfolding number(this) in this.v
+}
+
+method add(this: Ref, other: Ref) returns (res: Ref)
+    requires number(this) && number(other)
+    ensures number(this) && number(other) && number(res)
+    ensures old(snap(this)) + old(snap(other)) == snap(res)
+{
+    unfold number(this)
+    unfold number(other)
+    var sum: Int := this.v + other.v
+    fold number(this)
+    fold number(other)
+    res := new(v)
+    res.v := sum
+    fold number(res)
+}

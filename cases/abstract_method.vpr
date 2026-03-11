@@ -1,0 +1,2 @@
+method add(a: Int, b: Int) returns (res: Int)
+    ensures res == a + b
