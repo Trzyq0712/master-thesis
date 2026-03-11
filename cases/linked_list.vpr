@@ -1,0 +1,22 @@
+field val: Int
+field next: Ref
+
+predicate list(this: Ref) {
+    this != null ==> acc(this.val) && acc(this.next) && list(this.next)
+}
+
+function length(this: Ref): Int 
+    requires list(this)
+{
+    this == null ? 0 : unfolding list(this) in 1 + length(this.next)
+}
+
+method prepend(this: Ref, v: Int) returns (res: Ref)
+    requires list(this)
+    ensures list(res)
+    ensures length(res) == 1 + old(length(this))
+{
+    res := new(val, next)
+    res.next := this
+    fold list(res)
+}
